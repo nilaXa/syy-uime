@@ -1,0 +1,42 @@
+{
+  "name": "@syy-uime/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "syy-uime": "./dist/bin/syy-uime.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node ./dist/bin/syy-uime.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run src",
+    "lint": "echo 'lint skipped'",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@syy-uime/core": "workspace:*",
+    "@syy-uime/playwright-adapter": "workspace:*",
+    "@syy-uime/rules": "workspace:*",
+    "@syy-uime/scoring": "workspace:*",
+    "@syy-uime/gemini-reporter": "workspace:*",
+    "@syy-uime/html-reporter": "workspace:*",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.0",
+    "js-yaml": "^4.1.0",
+    "picocolors": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.7.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

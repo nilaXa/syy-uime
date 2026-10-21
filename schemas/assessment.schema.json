@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://syy-uime.dev/schemas/assessment.schema.json",
+  "title": "syy-uime Assessment",
+  "description": "Canonical machine-readable assessment result produced by syy-uime.",
+  "type": "object",
+  "required": ["id", "project", "startedAt", "completedAt", "dimensions", "overallScore", "overallConfidence", "coverage"],
+  "properties": {
+    "id": { "type": "string" },
+    "project": {
+      "type": "object",
+      "required": ["name", "baseUrl"],
+      "properties": {
+        "name": { "type": "string" },
+        "baseUrl": { "type": "string", "format": "uri" }
+      }
+    },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "dimensions": {
+      "type": "object",
+      "required": ["functional", "consistent", "accessible", "responsive"],
+      "properties": {
+        "functional": { "$ref": "#/definitions/dimensionAssessment" },
+        "consistent": { "$ref": "#/definitions/dimensionAssessment" },
+        "accessible": { "$ref": "#/definitions/dimensionAssessment" },
+        "responsive": { "$ref": "#/definitions/dimensionAssessment" }
+      }
+    },
+    "overallScore": { "type": "number", "minimum": 0, "maximum": 100 },
+    "overallConfidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "coverage": {
+      "type": "object",
+      "required": ["pagesAssessed", "routesConfigured", "viewports", "screenshotsCaptured", "journeysConfigured", "journeysExecuted"],
+      "properties": {
+        "pagesAssessed": { "type": "integer" },
+        "routesConfigured": { "type": "integer" },
+        "viewports": { "type": "integer" },
+        "screenshotsCaptured": { "type": "integer" },
+        "journeysConfigured": { "type": "integer" },
+        "journeysExecuted": { "type": "integer" }
+      }
+    },
+    "llmAnalysis": {
+      "type": "object",
+      "required": ["executiveSummary", "strengths", "gaps", "recommendations", "patterns"],
+      "properties": {
+        "executiveSummary": { "type": "string" },
+        "strengths": { "type": "array", "items": { "$ref": "#/definitions/analysisItem" } },
+        "gaps": { "type": "array", "items": { "$ref": "#/definitions/analysisItem" } },
+        "recommendations": { "type": "array", "items": { "$ref": "#/definitions/recommendation" } },
+        "patterns": { "type": "array", "items": { "$ref": "#/definitions/pattern" } }
+      }
+    }
+  },
+  "definitions": {
+    "dimensionAssessment": {
+      "type": "object",
+      "required": ["dimension", "score", "confidence", "checksRun", "checksPassed", "checksFailed", "findings", "coverageNotes"],
+      "properties": {
+        "dimension": { "type": "string", "enum": ["functional", "consistent", "accessible", "responsive"] },
+        "score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "checksRun": { "type": "integer" },
+        "checksPassed": { "type": "integer" },
+        "checksFailed": { "type": "integer" },
+        "findings": { "type": "array", "items": { "$ref": "#/definitions/finding" } },
+        "coverageNotes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["id", "ruleId", "dimension", "severity", "page", "url", "message", "evidence", "confidence"],
+      "properties": {
+        "id": { "type": "string" },
+        "ruleId": { "type": "string" },
+        "dimension": { "type": "string", "enum": ["functional", "consistent", "accessible", "responsive"] },
+        "severity": { "type": "string", "enum": ["blocker", "critical", "major", "minor", "info"] },
+        "page": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "selector": { "type": "string" },
+        "elementDescription": { "type": "string" },
+        "message": { "type": "string" },
+        "expected": {},
+        "actual": {},
+        "evidence": { "type": "array", "items": { "$ref": "#/definitions/evidence" } },
+        "screenshot": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": { "type": "string", "enum": ["dom", "computed-style", "screenshot", "axe", "console", "network", "geometry", "journey-step", "keyboard", "semantic", "style-fingerprint"] },
+        "data": {}
+      }
+    },
+    "analysisItem": {
+      "type": "object",
+      "required": ["title", "description", "findingIds"],
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "findingIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "recommendation": {
+      "type": "object",
+      "required": ["priority", "title", "description", "dimension", "findingIds"],
+      "properties": {
+        "priority": { "type": "string", "enum": ["blocker", "critical", "major", "minor", "info"] },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "dimension": { "type": "string", "enum": ["functional", "consistent", "accessible", "responsive"] },
+        "findingIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "pattern": {
+      "type": "object",
+      "required": ["title", "explanation", "relatedFindingIds"],
+      "properties": {
+        "title": { "type": "string" },
+        "explanation": { "type": "string" },
+        "relatedFindingIds": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

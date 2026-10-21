@@ -1,0 +1,67 @@
+project:
+  name: Demo Order Management
+
+target:
+  baseUrl: http://localhost:5173
+
+authentication:
+  # storageState: .auth/user.json
+
+routes:
+  - /
+  - /orders
+  - /products
+  - /customers
+
+viewports:
+  - name: mobile
+    width: 375
+    height: 812
+  - name: tablet
+    width: 768
+    height: 1024
+  - name: desktop
+    width: 1440
+    height: 900
+
+dimensions:
+  functional: true
+  consistent: true
+  accessible: true
+  responsive: true
+
+thresholds:
+  overall: 75
+  functional: 80
+  consistent: 75
+  accessible: 80
+  responsive: 75
+
+journeys:
+  - name: Search products
+    start: /products
+    steps:
+      - action: fill
+        selector: "[data-testid='search']"
+        value: chicken
+      - action: click
+        selector: "[data-testid='search-button']"
+      - action: assert-visible
+        selector: "[data-testid='results']"
+
+  - name: Submit customer form
+    start: /customers
+    steps:
+      - action: fill
+        selector: "#customer-name"
+        value: Acme Inc
+      - action: fill
+        selector: "#customer-email"
+        value: acme@example.com
+      - action: click
+        selector: "[data-testid='submit-customer']"
+      - action: assert-visible
+        selector: "[data-testid='success-message']"
+
+llm:
+  enabled: false

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav>
+      <a href="/">Home</a>
+      <a href="/orders">Orders</a>
+      <a href="/products">Products</a>
+      <a href="/customers">Customers</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Products</h1>
+    <div class="search-bar">
+      <input type="text" data-testid="search" placeholder="Search products..." aria-label="Search products">
+      <button data-testid="search-button" class="btn btn-primary">Search</button>
+    </div>
+    <div data-testid="results" class="results">
+      <div class="card product-card">
+        <h2>Chicken Breast</h2>
+        <p>$8.99 / lb</p>
+      </div>
+      <div class="card product-card">
+        <h2>Organic Eggs</h2>
+        <p>$4.49 / dozen</p>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/products.js"></script>
+</body>
+</html>

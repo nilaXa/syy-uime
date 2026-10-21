@@ -1,0 +1,24 @@
+{
+  "name": "syy-uime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "UI Maturity Assessment Engine — deterministic browser-based UI quality assessment",
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf .syy-uime node_modules/.cache",
+    "syy-uime": "pnpm --filter cli start",
+    "assess": "pnpm --filter cli start assess",
+    "assess:demo": "pnpm --filter fixture-demo-app build && pnpm --filter cli start assess --config syy-uime.config.example.yml"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.0",
+    "turbo": "^2.1.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "packageManager": "pnpm@10.28.2"
+}

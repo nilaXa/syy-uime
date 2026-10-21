@@ -1,0 +1,30 @@
+project:
+  name: Basic Example
+
+target:
+  baseUrl: http://localhost:5173
+
+routes:
+  - /
+  - /orders
+
+viewports:
+  - name: desktop
+    width: 1440
+    height: 900
+
+dimensions:
+  functional: true
+  consistent: true
+  accessible: true
+  responsive: true
+
+thresholds:
+  overall: 70
+  functional: 70
+  consistent: 70
+  accessible: 70
+  responsive: 70
+
+llm:
+  enabled: false

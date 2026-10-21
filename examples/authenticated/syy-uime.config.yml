@@ -1,0 +1,32 @@
+project:
+  name: Authenticated Example
+
+target:
+  baseUrl: http://localhost:5173
+
+authentication:
+  storageState: .auth/user.json
+
+routes:
+  - /
+  - /orders
+
+viewports:
+  - name: desktop
+    width: 1440
+    height: 900
+
+journeys:
+  - name: Search products
+    start: /products
+    steps:
+      - action: fill
+        selector: "[data-testid='search']"
+        value: example
+      - action: click
+        selector: "[data-testid='search-button']"
+      - action: assert-visible
+        selector: "[data-testid='results']"
+
+llm:
+  enabled: false
