@@ -96,5 +96,9 @@ function normalizeJourneys(raw: unknown): JourneyConfig[] | undefined {
 
 function normalizeLlm(raw: unknown): LlmConfig {
   if (!raw || typeof raw !== 'object') return { enabled: false };
-  return { enabled: (raw as LlmConfig).enabled === true };
+  const llm = raw as LlmConfig;
+  return {
+    enabled: llm.enabled === true,
+    model: typeof llm.model === 'string' && llm.model.trim() ? llm.model.trim() : undefined,
+  };
 }

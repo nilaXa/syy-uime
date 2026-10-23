@@ -149,18 +149,7 @@ export async function runAssessment(
       coverage,
     };
 
-    const analyzer = new GeminiAnalyzer({
-      enabled: options.noLlm ? false : config.llm?.enabled ?? false,
-    });
-
-    try {
-      const llmAnalysis = await analyzer.analyze(assessment);
-      assessment = { ...assessment, llmAnalysis };
-    } catch (err) {
-      if (config.llm?.enabled) {
-        console.warn(`Gemini analysis skipped: ${(err as Error).message}`);
-      }
-    }
+    assessment = await runLlmAnalysis(assessment, config, options);
 
     const assessmentPath = join(outputDir, 'assessment.json');
     await writeFile(assessmentPath, JSON.stringify(assessment, null, 2), 'utf-8');
@@ -177,6 +166,26 @@ export async function runAssessment(
   } catch (err) {
     await runner.stop().catch(() => {});
     throw err;
+  }
+}
+
+async function runLlmAnalysis(
+  assessment: Assessment,
+  config: AssessmentConfig,
+  options: AssessmentOptions,
+): Promise<Assessment> {
+  if (options.noLlm || !config.llm?.enabled) {
+    const message = options.noLlm ? 'disabled via --no-llm' : 'llm.enabled is false in config';
+    return { ...assessment, llmStatus: { provider: 'gemini', state: 'disabled', message } };
+  }
+
+  const analyzer = new GeminiAnalyzer({ enabled: true, model: config.llm.model });
+  try {
+    const llmAnalysis = await analyzer.analyze(assessment);
+    return { ...assessment, llmAnalysis, llmStatus: { provider: 'gemini', state: 'completed', model: analyzer.model } };
+  } catch (err) {
+    const message = (err as Error).message;
+    return { ...assessment, llmStatus: { provider: 'gemini', state: 'failed', model: analyzer.model, message } };
   }
 }
 

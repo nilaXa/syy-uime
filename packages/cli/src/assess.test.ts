@@ -42,6 +42,8 @@ describe('assess integration', () => {
     const { assessment, exitCode } = await runAssessment(config, options);
 
     expect(exitCode).toBe(2); // threshold failure expected
+    expect(assessment.llmAnalysis).toBeUndefined();
+    expect(assessment.llmStatus).toMatchObject({ provider: 'gemini', state: 'disabled' });
     expect(assessment.overallScore).toBeGreaterThan(0);
     expect(assessment.overallScore).toBeLessThan(100);
 

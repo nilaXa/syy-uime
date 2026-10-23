@@ -64,4 +64,7 @@ journeys:
         selector: "[data-testid='success-message']"
 
 llm:
-  enabled: false
+  # Requires GEMINI_API_KEY in .env (next to where you run the command) or the environment.
+  enabled: true
+  # Optional; otherwise GEMINI_MODEL, then gemini-2.5-flash.
+  # model: gemini-2.5-flash

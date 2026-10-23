@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { resolve } from 'node:path';
 import { Command } from 'commander';
 import { config } from 'dotenv';
 import pc from 'picocolors';
@@ -8,7 +9,8 @@ import { generateHtmlReport } from '@syy-uime/html-reporter';
 import { EXIT_SUCCESS, EXIT_TECHNICAL_FAILURE } from '@syy-uime/scoring';
 import type { Dimension } from '@syy-uime/core';
 
-config({ path: '.env' });
+// pnpm scripts change cwd to the package directory; INIT_CWD is where the user invoked the command.
+config({ path: resolve(process.env.INIT_CWD ?? process.cwd(), '.env') });
 
 const program = new Command();
 
@@ -20,7 +22,7 @@ program
   .option('--config <path>', 'Path to syy-uime configuration file')
   .option('--url <url>', 'Override base URL')
   .option('--output <path>', 'Override output directory')
-  .option('--no-llm', 'Disable Gemini analysis', false)
+  .option('--no-llm', 'Disable Gemini analysis')
   .option('--headed', 'Run Playwright in headed mode', false)
   .option('--debug', 'Enable debug output', false)
   .option('--dimension <dimension>', 'Run only a specific dimension (repeatable)', collectDimensions, [])
@@ -42,7 +44,7 @@ program
         configPath: options.config,
         url: options.url,
         output: options.output,
-        noLlm: options.noLlm,
+        noLlm: options.llm === false,
         headed: options.headed,
         debug: options.debug,
         dimensions: options.dimension.length > 0 ? (options.dimension as Dimension[]) : undefined,
@@ -114,6 +116,11 @@ function printSummary(assessment: import('@syy-uime/core').Assessment): void {
       `${pc.bold(pc.cyan(dimension))}: ${data.score} (confidence: ${data.confidence}, ${data.checksFailed} findings)`,
     );
   }
+
+  const llm = assessment.llmStatus;
+  if (llm?.state === 'completed') console.log(pc.green(`\nGemini analysis: completed (${llm.model})`));
+  else if (llm?.state === 'failed') console.log(pc.yellow(`\nGemini analysis: failed — ${llm.message}`));
+  else console.log(pc.dim(`\nGemini analysis: disabled${llm?.message ? ` (${llm.message})` : ''}`));
 
   console.log(`\nArtifacts written to .syy-uime/runs/${assessment.id}/`);
 }

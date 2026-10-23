@@ -285,20 +285,19 @@ Overall confidence is the average of the four dimension confidences.
 
 ## Gemini Integration
 
-Set `GEMINI_API_KEY` in `.env` and enable in config:
+Set `GEMINI_API_KEY` in `.env` (in the directory you run the command from, typically the repo root) or export it in your shell, then enable it in config:
 
 ```yaml
 llm:
   enabled: true
+  # model: gemini-2.5-pro   # optional
 ```
 
-Optionally override the model:
+Model resolution order: `llm.model` in config → `GEMINI_MODEL` env var → `gemini-2.5-flash`.
 
-```bash
-GEMINI_MODEL=gemini-2.5-pro
-```
+`--no-llm` disables Gemini for a single run. The CLI prints the Gemini status (completed / failed with reason / disabled) after each run, and `assessment.json` records it under `llmStatus`. If Gemini fails, the report says why, and the run still completes with deterministic scores.
 
-Gemini receives the structured `assessment.json` and produces:
+Gemini receives a compact version of the assessment (scores, coverage, and findings without raw evidence payloads) and produces:
 
 - Executive summary
 - Key strengths and gaps

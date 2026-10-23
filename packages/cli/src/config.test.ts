@@ -28,6 +28,24 @@ viewports:
     expect(config.project.name).toBe('Test Project');
     expect(config.target.baseUrl).toBe('http://localhost:3000');
     expect(config.routes).toEqual(['/']);
+    expect(config.llm).toEqual({ enabled: false, model: undefined });
+  });
+
+  it('parses llm.enabled and optional llm.model', async () => {
+    const path = join(tmpdir(), `syy-uime-llm-${Date.now()}.yml`);
+    await writeFile(
+      path,
+      `
+project: { name: P }
+target: { baseUrl: http://localhost:3000 }
+routes: [/]
+llm:
+  enabled: true
+  model: gemini-custom
+`,
+    );
+    const config = await loadConfig(path);
+    expect(config.llm).toEqual({ enabled: true, model: 'gemini-custom' });
   });
 });
 

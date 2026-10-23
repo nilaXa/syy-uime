@@ -104,6 +104,14 @@ export interface Assessment {
   overallConfidence: number;
   coverage: CoverageSummary;
   llmAnalysis?: LlmAnalysis;
+  llmStatus?: LlmStatus;
+}
+
+export interface LlmStatus {
+  provider: 'gemini';
+  state: 'completed' | 'disabled' | 'failed';
+  model?: string;
+  message?: string;
 }
 
 export interface ViewportConfig {
@@ -147,6 +155,7 @@ export interface AuthenticationConfig {
 
 export interface LlmConfig {
   enabled?: boolean;
+  model?: string;
 }
 
 export interface AssessmentConfig {
