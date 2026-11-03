@@ -11,7 +11,7 @@ import type {
 } from '@syy-uime/core';
 import { generateRunId, normalizeDimensions } from '@syy-uime/core';
 import { PlaywrightRunner } from '@syy-uime/playwright-adapter';
-import { RuleEngine, getRulesForDimensions, flattenFindings, sumChecks } from '@syy-uime/rules';
+import { RuleEngine, getRulesForDimensions, flattenFindings, sumChecks, createFinding } from '@syy-uime/rules';
 import {
   calculateScore,
   calculateOverallScore,
@@ -23,6 +23,7 @@ import {
   EXIT_THRESHOLD_FAILURE,
 } from '@syy-uime/scoring';
 import { GeminiAnalyzer } from '@syy-uime/gemini-reporter';
+import { TokenBaselineProvider } from '@syy-uime/design-tokens';
 import { generateHtmlReport } from '@syy-uime/html-reporter';
 
 export async function runAssessment(
@@ -37,6 +38,9 @@ export async function runAssessment(
   const startedAt = new Date().toISOString();
   const dimensions = options.dimensions ?? normalizeDimensions(config.dimensions);
   const runner = new PlaywrightRunner(options.headed);
+
+  // Run-level providers (design-token baseline, etc.) collect once per run.
+  const { globalEvidence, globalErrors } = await collectGlobalEvidence(config, options, runId, outputDir);
 
   try {
     await runner.start(config);
@@ -66,6 +70,8 @@ export async function runAssessment(
         viewport: pageEvidence.viewport,
         evidence: pageEvidence.evidence,
         screenshots: pageEvidence.screenshots,
+        globalEvidence,
+        config,
       });
 
       for (const result of results) {
@@ -89,9 +95,33 @@ export async function runAssessment(
         viewport: { name: 'journey', width: 0, height: 0 },
         evidence: journeyEvidence,
         screenshots: [],
+        globalEvidence,
+        config,
       });
       dimensionResults.functional.results.push(...journeyResults);
       dimensionResults.functional.findings.push(...flattenFindings(journeyResults));
+    }
+
+    // Surface provider load failures as findings instead of crashing the run.
+    for (const message of globalErrors) {
+      const result: RuleResult = {
+        findings: [
+          createFinding({
+            ruleId: 'token-baseline-error',
+            dimension: 'consistent',
+            severity: 'major',
+            page: 'run',
+            url: config.target.baseUrl,
+            message: `Design-token baseline could not be loaded: ${message}`,
+            evidence: [{ type: 'token-baseline', data: { error: message } }],
+          }),
+        ],
+        checksRun: 1,
+        checksPassed: 0,
+        checksFailed: 1,
+      };
+      dimensionResults.consistent.results.push(result);
+      dimensionResults.consistent.findings.push(...result.findings);
     }
 
     const dimensionAssessments: Record<Dimension, DimensionAssessment> = {
@@ -167,6 +197,28 @@ export async function runAssessment(
     await runner.stop().catch(() => {});
     throw err;
   }
+}
+
+async function collectGlobalEvidence(
+  config: AssessmentConfig,
+  options: AssessmentOptions,
+  runId: string,
+  outputDir: string,
+): Promise<{ globalEvidence: import('@syy-uime/core').Evidence[]; globalErrors: string[] }> {
+  const globalEvidence: import('@syy-uime/core').Evidence[] = [];
+  const globalErrors: string[] = [];
+
+  const providers = [new TokenBaselineProvider()];
+  for (const provider of providers) {
+    try {
+      const collection = await provider.collect({ config, options, runId, outputDir });
+      globalEvidence.push(...collection.evidence);
+    } catch (err) {
+      globalErrors.push(`${provider.id}: ${(err as Error).message}`);
+    }
+  }
+
+  return { globalEvidence, globalErrors };
 }
 
 async function runLlmAnalysis(

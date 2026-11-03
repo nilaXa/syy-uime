@@ -52,6 +52,9 @@ describe('assess integration', () => {
 
     const conFindings = assessment.dimensions.consistent.findings;
     expect(conFindings.some((f) => f.ruleId === 'button-style-variation')).toBe(true);
+    // designSystem.tokenFile is configured — off-token defect colors must be flagged
+    expect(conFindings.some((f) => f.ruleId === 'token-color-compliance')).toBe(true);
+    expect(conFindings.some((f) => f.ruleId === 'token-radius-compliance')).toBe(true);
 
     const accFindings = assessment.dimensions.accessible.findings;
     expect(accFindings.some((f) => f.ruleId === 'axe-violations')).toBe(true);

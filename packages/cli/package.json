@@ -26,6 +26,7 @@
     "@syy-uime/playwright-adapter": "workspace:*",
     "@syy-uime/rules": "workspace:*",
     "@syy-uime/scoring": "workspace:*",
+    "@syy-uime/design-tokens": "workspace:*",
     "@syy-uime/gemini-reporter": "workspace:*",
     "@syy-uime/html-reporter": "workspace:*",
     "commander": "^12.1.0",

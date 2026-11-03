@@ -24,7 +24,7 @@ export async function collectStyles(
   page: Page,
   context: CollectorContext,
 ): Promise<Evidence<StyleCollection>> {
-  const data = await page.evaluate((properties): ComputedStyleEntry[] => {
+  const data = await page.evaluate((properties): { entries: ComputedStyleEntry[]; cssVariables: Record<string, string> } => {
     const entries: ComputedStyleEntry[] = [];
     const selectors = [
       'button',
@@ -88,7 +88,16 @@ export async function collectStyles(
       });
     }
 
-    return entries;
+    const rootStyle = window.getComputedStyle(document.documentElement);
+    const cssVariables: Record<string, string> = {};
+    for (let i = 0; i < rootStyle.length; i++) {
+      const name = rootStyle.item(i);
+      if (name.startsWith('--')) {
+        cssVariables[name] = rootStyle.getPropertyValue(name).trim();
+      }
+    }
+
+    return { entries, cssVariables };
 
     function getSelector(el: HTMLElement): string {
       if (el.id) return `#${el.id}`;
@@ -100,6 +109,11 @@ export async function collectStyles(
 
   return {
     type: 'computed-style',
-    data: { page: context.page, viewport: context.viewport.name, entries: data },
+    data: {
+      page: context.page,
+      viewport: context.viewport.name,
+      entries: data.entries,
+      cssVariables: data.cssVariables,
+    },
   };
 }

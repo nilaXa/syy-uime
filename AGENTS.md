@@ -39,3 +39,4 @@ The demo app contains intentional defects, so the CLI exits with code `2` (thres
 - Playwright browsers must be installed separately via the adapter package.
 - The CLI resolves config/output paths relative to `INIT_CWD` when invoked through pnpm scripts.
 - Gemini is optional and disabled with `--no-llm` or `llm.enabled: false`.
+- `designSystem.tokenFile` (Figma oklch export) powers the `token-*` Consistent rules via `packages/design-tokens` and run-level `globalEvidence` in `RuleContext`.

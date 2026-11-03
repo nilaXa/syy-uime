@@ -8,6 +8,8 @@ import { buttonStyleRule } from './consistent/button-style.js';
 import { formControlStyleRule } from './consistent/form-control-style.js';
 import { typographyRule } from './consistent/typography.js';
 import { spacingRule } from './consistent/spacing.js';
+import { tokenColorRule, tokenRadiusRule, tokenSpacingRule, tokenTypographyRule } from './consistent/token-compliance.js';
+import { tokenRegistryRule } from './consistent/token-registry.js';
 import { axeViolationsRule } from './accessible/axe-violations.js';
 import { keyboardFocusRule } from './accessible/keyboard-focus.js';
 import { semanticStructureRule } from './accessible/semantic-structure.js';
@@ -27,6 +29,11 @@ export const ALL_RULES: Rule[] = [
   formControlStyleRule,
   typographyRule,
   spacingRule,
+  tokenColorRule,
+  tokenRadiusRule,
+  tokenSpacingRule,
+  tokenTypographyRule,
+  tokenRegistryRule,
   // Accessible
   axeViolationsRule,
   keyboardFocusRule,

@@ -1,0 +1,34 @@
+project:
+  name: Design-System Baseline Example
+
+target:
+  baseUrl: http://localhost:5173
+
+routes:
+  - /
+
+viewports:
+  - name: desktop
+    width: 1440
+    height: 900
+
+designSystem:
+  # shadcn/Tailwind v4 registry-format token export (oklch).
+  tokenFile: oklch.json
+  theme: light
+  strict: true
+  checks:
+    colors: true
+    radius: true
+    spacing: true
+    typography: true
+    registry: true
+
+dimensions:
+  functional: false
+  consistent: true
+  accessible: false
+  responsive: false
+
+llm:
+  enabled: false

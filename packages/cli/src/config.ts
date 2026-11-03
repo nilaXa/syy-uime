@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import yaml from 'js-yaml';
-import type { AssessmentConfig, ViewportConfig, JourneyConfig, ThresholdConfig, DimensionToggleConfig, AuthenticationConfig, LlmConfig } from '@syy-uime/core';
+import type { AssessmentConfig, ViewportConfig, JourneyConfig, ThresholdConfig, DimensionToggleConfig, AuthenticationConfig, LlmConfig, DesignSystemConfig } from '@syy-uime/core';
 import { sanitizeUrl } from '@syy-uime/core';
 
 export async function loadConfig(path: string): Promise<AssessmentConfig> {
@@ -43,6 +43,7 @@ function normalizeConfig(raw: Record<string, unknown>): AssessmentConfig {
     thresholds: normalizeThresholds(raw.thresholds),
     journeys: normalizeJourneys(raw.journeys),
     llm: normalizeLlm(raw.llm),
+    designSystem: normalizeDesignSystem(raw.designSystem ?? raw.design_system),
   };
 }
 
@@ -100,5 +101,23 @@ function normalizeLlm(raw: unknown): LlmConfig {
   return {
     enabled: llm.enabled === true,
     model: typeof llm.model === 'string' && llm.model.trim() ? llm.model.trim() : undefined,
+  };
+}
+
+function normalizeDesignSystem(raw: unknown): DesignSystemConfig | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const ds = raw as Record<string, unknown>;
+  const checks = (ds.checks ?? {}) as Record<string, unknown>;
+  return {
+    tokenFile: typeof ds.tokenFile === 'string' && ds.tokenFile.trim() ? ds.tokenFile.trim() : undefined,
+    theme: typeof ds.theme === 'string' && ds.theme.trim() ? ds.theme.trim() : undefined,
+    strict: ds.strict !== false,
+    checks: {
+      colors: checks.colors !== false,
+      radius: checks.radius !== false,
+      spacing: checks.spacing !== false,
+      typography: checks.typography !== false,
+      registry: checks.registry !== false,
+    },
   };
 }

@@ -17,7 +17,8 @@ export type EvidenceType =
   | 'journey-step'
   | 'keyboard'
   | 'semantic'
-  | 'style-fingerprint';
+  | 'style-fingerprint'
+  | 'token-baseline';
 
 export interface Evidence<T = unknown> {
   type: EvidenceType;
@@ -158,6 +159,45 @@ export interface LlmConfig {
   model?: string;
 }
 
+export type TokenCategory =
+  | 'color'
+  | 'dimension'
+  | 'borderRadius'
+  | 'fontFamily'
+  | 'fontSize'
+  | 'lineHeight'
+  | 'spacing'
+  | 'shadow'
+  | 'other';
+
+export interface TokenEntry {
+  name: string;
+  path: string[];
+  category: TokenCategory;
+  value: string;
+  normalized: string;
+}
+
+export interface TokenBaseline {
+  source: string;
+  theme?: string;
+  tokens: TokenEntry[];
+  byCategory: Record<TokenCategory, TokenEntry[]>;
+}
+
+export interface DesignSystemConfig {
+  tokenFile?: string;
+  theme?: string;
+  strict?: boolean;
+  checks?: {
+    colors?: boolean;
+    radius?: boolean;
+    spacing?: boolean;
+    typography?: boolean;
+    registry?: boolean;
+  };
+}
+
 export interface AssessmentConfig {
   project: { name: string };
   target: { baseUrl: string };
@@ -168,6 +208,7 @@ export interface AssessmentConfig {
   thresholds?: ThresholdConfig;
   journeys?: JourneyConfig[];
   llm?: LlmConfig;
+  designSystem?: DesignSystemConfig;
 }
 
 export interface AssessmentOptions {
@@ -213,6 +254,8 @@ export interface RuleContext {
   evidence: Evidence[];
   screenshots: string[];
   config: AssessmentConfig;
+  /** Run-level evidence (e.g. design-token baseline) shared across all pages. */
+  globalEvidence?: Evidence[];
 }
 
 export interface RuleResult {
@@ -302,6 +345,8 @@ export interface StyleCollection {
   page: string;
   viewport: string;
   entries: ComputedStyleEntry[];
+  /** CSS custom properties registered on :root (Tailwind v4 @theme output). */
+  cssVariables?: Record<string, string>;
 }
 
 export interface DomSnapshot {

@@ -63,6 +63,18 @@ journeys:
       - action: assert-visible
         selector: "[data-testid='success-message']"
 
+designSystem:
+  # Token file exported from Figma (oklch values, W3C DTCG or Tokens Studio format).
+  tokenFile: fixtures/demo-app/tokens/oklch.json
+  # theme: light
+  strict: true
+  checks:
+    colors: true
+    radius: true
+    spacing: true
+    typography: true
+    registry: true
+
 llm:
   # Requires GEMINI_API_KEY in .env (next to where you run the command) or the environment.
   enabled: true

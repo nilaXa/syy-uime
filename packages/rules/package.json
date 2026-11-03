@@ -18,7 +18,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@syy-uime/core": "workspace:*"
+    "@syy-uime/core": "workspace:*",
+    "@syy-uime/design-tokens": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.6.0",

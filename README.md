@@ -283,6 +283,40 @@ Overall confidence is the average of the four dimension confidences.
 
 ---
 
+## Design-System Baseline (Token Validation)
+
+Point the engine at a design-token file exported from Figma to validate rendered styles against the approved token set instead of only the dominant-pattern baseline:
+
+Supported token file formats — auto-detected:
+
+- **shadcn/Tailwind v4 registry** (`cssVars.theme`/`cssVars.light`/`cssVars.dark` flat maps — see `examples/design-system/oklch.json`)
+- **W3C DTCG** (`{ "$value": ..., "$type": ... }` groups with `{group.name}` references)
+- **Tokens Studio** (`{ "value": ..., "type": ... }` with named sets)
+- **Flat** `name → value` maps
+
+```yaml
+designSystem:
+  tokenFile: tokens/oklch.json
+  theme: light                   # optional: pick a named set (light/dark/…) when the file has several
+  strict: true                   # exact normalized match; false allows small oklch/px tolerance
+  checks:
+    colors: true                 # text/background/border colors
+    radius: true                 # border-radius
+    spacing: true                # padding/margin/gap
+    typography: true             # font-size/line-height/font-family
+    registry: true               # tokens registered as :root CSS variables (Tailwind v4 @theme / shadcn)
+```
+
+New findings appear under the **Consistent** dimension as `token-color-compliance`, `token-radius-compliance`, `token-spacing-compliance`, `token-typography-compliance`, and `token-registry`.
+
+Notes:
+- `strict: true` compares normalized values exactly. `rem`/`em` token values are converted to px at a 16px base, matching computed styles. Unitless line-height tokens (e.g. `"1.5"`) are validated as `token × element font-size`.
+- If a build step converts `oklch()` colors to `lab()`/`color()` before the browser sees them, use `strict: false`.
+- A missing or unparseable `tokenFile` produces a `token-baseline-error` finding; it never aborts the run.
+- Off-token values are deduplicated per property+value so reports stay readable.
+
+---
+
 ## Gemini Integration
 
 Set `GEMINI_API_KEY` in `.env` (in the directory you run the command from, typically the repo root) or export it in your shell, then enable it in config:

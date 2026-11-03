@@ -87,10 +87,29 @@
         }
       }
     },
+    "designSystem": {
+      "type": "object",
+      "properties": {
+        "tokenFile": { "type": "string" },
+        "theme": { "type": "string" },
+        "strict": { "type": "boolean" },
+        "checks": {
+          "type": "object",
+          "properties": {
+            "colors": { "type": "boolean" },
+            "radius": { "type": "boolean" },
+            "spacing": { "type": "boolean" },
+            "typography": { "type": "boolean" },
+            "registry": { "type": "boolean" }
+          }
+        }
+      }
+    },
     "llm": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" }
+        "enabled": { "type": "boolean" },
+        "model": { "type": "string" }
       }
     }
   }

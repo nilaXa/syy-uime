@@ -6,7 +6,7 @@
     "composite": true
   },
   "include": ["src/**/*.ts"],
-  "references": [
+  "references": [{ "path": "../design-tokens" },
     { "path": "../core" },
     { "path": "../playwright-adapter" },
     { "path": "../rules" },

@@ -1,10 +1,10 @@
 :root {
-  --primary: #2563eb;
-  --primary-text: #ffffff;
-  --surface: #ffffff;
-  --bg: #f1f5f9;
-  --text: #1e293b;
-  --border: #cbd5e1;
+  --primary: oklch(0.55 0.22 263);
+  --primary-text: oklch(1 0 0);
+  --surface: oklch(1 0 0);
+  --bg: oklch(0.97 0.003 248);
+  --text: oklch(0.28 0.04 260);
+  --border: oklch(0.87 0.02 250);
   --radius: 4px;
 }
 
@@ -64,7 +64,7 @@ main {
   padding: 0 1rem;
   border: 1px solid transparent;
   border-radius: var(--radius);
-  background: #e2e8f0;
+  background: oklch(0.92 0.01 250);
   color: var(--text);
   font-size: 14px;
   font-weight: 500;
@@ -140,8 +140,8 @@ input[type="email"] {
 .success-message {
   margin-top: 1rem;
   padding: 1rem;
-  background: #dcfce7;
-  border: 1px solid #86efac;
+  background: oklch(0.95 0.05 150);
+  border: 1px solid oklch(0.9 0.15 155);
   border-radius: var(--radius);
 }
 

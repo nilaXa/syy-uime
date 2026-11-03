@@ -92,7 +92,7 @@
       "type": "object",
       "required": ["type", "data"],
       "properties": {
-        "type": { "type": "string", "enum": ["dom", "computed-style", "screenshot", "axe", "console", "network", "geometry", "journey-step", "keyboard", "semantic", "style-fingerprint"] },
+        "type": { "type": "string", "enum": ["dom", "computed-style", "screenshot", "axe", "console", "network", "geometry", "journey-step", "keyboard", "semantic", "style-fingerprint", "token-baseline"] },
         "data": {}
       }
     },

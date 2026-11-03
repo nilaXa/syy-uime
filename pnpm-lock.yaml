@@ -35,6 +35,9 @@ importers:
       '@syy-uime/core':
         specifier: workspace:*
         version: link:../core
+      '@syy-uime/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
       '@syy-uime/gemini-reporter':
         specifier: workspace:*
         version: link:../gemini-reporter
@@ -78,6 +81,22 @@ importers:
 
   packages/core:
     devDependencies:
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.0
+        version: 2.1.9(@types/node@22.20.5)
+
+  packages/design-tokens:
+    dependencies:
+      '@syy-uime/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.0
+        version: 22.20.5
       typescript:
         specifier: ^5.6.0
         version: 5.9.3
@@ -144,6 +163,9 @@ importers:
       '@syy-uime/core':
         specifier: workspace:*
         version: link:../core
+      '@syy-uime/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
     devDependencies:
       typescript:
         specifier: ^5.6.0

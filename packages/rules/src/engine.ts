@@ -1,4 +1,4 @@
-import type { Evidence, Rule, RuleContext, RuleResult, Finding } from '@syy-uime/core';
+import type { AssessmentConfig, Evidence, Rule, RuleContext, RuleResult, Finding } from '@syy-uime/core';
 
 export interface EngineContext {
   page: string;
@@ -6,6 +6,9 @@ export interface EngineContext {
   viewport: { name: string; width: number; height: number };
   evidence: Evidence[];
   screenshots: string[];
+  /** Run-level evidence shared across pages (e.g. design-token baseline). */
+  globalEvidence?: Evidence[];
+  config?: AssessmentConfig;
 }
 
 export class RuleEngine {
@@ -17,10 +20,11 @@ export class RuleEngine {
 
   async run(context: EngineContext): Promise<RuleResult[]> {
     const results: RuleResult[] = [];
+    const allEvidence = [...context.evidence, ...(context.globalEvidence ?? [])];
 
     for (const rule of this.rules) {
       const hasEvidence = rule.requiredEvidence.every((type) =>
-        context.evidence.some((e) => e.type === type),
+        allEvidence.some((e) => e.type === type),
       );
 
       if (!hasEvidence) continue;
@@ -31,7 +35,8 @@ export class RuleEngine {
         viewport: context.viewport,
         evidence: context.evidence,
         screenshots: context.screenshots,
-        config: {} as any,
+        config: context.config ?? ({} as AssessmentConfig),
+        globalEvidence: context.globalEvidence,
       };
 
       const result = await rule.execute(ruleContext);
